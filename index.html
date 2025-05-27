@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta property="og:title" content="MotionPersona: Characteristics-aware Locomotion Control" />
+
+  <title>MotionPersona: Characteristics-aware Locomotion Control</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="static/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+
+
+  <section class="publication-header">
+    <div class="hero-body">
+      <div class="container is-max-widescreen">
+        <!-- <div class="columns is-centered"> -->
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">MotionPersona: <br> Characteristics-aware Locomotion Control
+          </h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="conference-name-block">
+    <div class="column has-text-centered">
+      <div class="title is-4 conference-name">
+        Anonymous authors
+      </div>
+    </div>
+
+    <div class="column has-text-centered">
+      <div class="publication-links">
+        <span class="link-block">
+
+          <a target="_blank" class="external-link button is-normal is-rounded">
+            <span class="icon"><i class="ai ai-arxiv"></i></span>
+            <span>Paper</span>
+          </a>
+        </span>
+
+        <span class="link-block">
+          <a target="_blank" class="external-link button is-normal is-rounded">
+            <span class="icon"><i class="fab fa-github"></i></span>
+            <span>Code</span>
+          </a>
+        </span>
+
+        <span class="link-block">
+          <a target="_blank" class="external-link button is-normal is-rounded">
+            <span class="icon"><i class="fas fa-database"></i></span>
+            <span>Dataset</span>
+          </a>
+        </span>
+
+        <span class="link-block">
+          <a target="_blank" class="external-link button is-normal is-rounded">
+            <span class="icon"><i class="fas fa-gamepad"></i></span>
+            <span>Unity Demo</span>
+          </a>
+        </span>
+
+        <span class="link-block">
+          <a target="_blank" class="external-link button is-normal is-rounded">
+            <span class="icon"><i class="fab fa-youtube"></i></span>
+            <span>Video</span>
+          </a>
+        </span>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <div class="column is-centered has-text-centered">
+          <img src="static/figures/teaser.jpg" alt="breakdancing dragons" width="100%" />
+        </div>
+
+        <h2 class="content has-text-centered">
+          We present the first <b>characteristics-aware</b> locomotion controller capable of generating high-quality animations that faithfully reflect the desired character characteristics while responding to dynamically varying locomotion control signals in real-time.
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <!-- Abstract. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              We present <b>MotionPersona</b>, a novel real-time character controller that allows users to characterize their character by specifying various attributes and projecting them into the generated motions for animating the character. In contrast to existing deep learning-based controllers, which typically produce homogeneous animations tailored to a single, predefined character, MotionPersona accounts for the impact of various character traits on motion as observed in the real world. To achieve this, we develop an autoregressive motion diffusion model conditioned on SMPL-X parameters, textual prompts, and user-defined locomotion control signals. We also curate a comprehensive dataset featuring a wide range of locomotion types and actor traits to enable the training of this characteristic-aware controller. Compared to prior work, MotionPersona can generate motions that faithfully reflect user-specified characteristics (e.g., an elderly person's shuffling gait) while responding in real time to dynamic control inputs. Additionally, we introduce a few-shot characterization technique as a complementary conditioning mechanism, enabling controller customization via short motion clips when language prompts fall short. Through extensive experiments, we demonstrate that MotionPersona outperforms existing methods in characteristics-aware locomotion control, offering superior motion quality and diversity, and adherence to user-specified character traits.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--/ Abstract. -->
+    </div>
+  </section>
+
+
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-full has-text-centered">
+            <h2 class="title is-3">Features</h2>
+            <div class="content has-text-justified">
+              <p>
+                <!-- Here we show the key features of our controller. -->
+              <ul></ul>
+              <li>
+                <b>Unified Multi-character Controller: </b> Our diffusion-based model offers robust real-time control over a wide range of characters, supporting various common locomotion gaits such as stop, walk, and run, all with a single, unified controller.
+              </li>
+              <li>
+                <b>Characteristics-aware Control: </b>  Users are allowed to characterize their own controller, by specifying their body shape and various character traits, represented by a SMPL-X vector and a text description, respectively.
+
+              </li>
+              <li>
+                <b>Example-based Characterization:</b> When language prompts fall short, the base controller can be easily adapted using our few-shot characterization method, allowing customization via short motion clips.
+              </li>
+              </ul>
+              </p>
+              <div style="padding-bottom: 1rem;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-centered has-text-centered">
+            <p><b>Robust real-time locomotion control</b></p>
+            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
+              <source src="./static/videos/section1/1_runtime.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="column is-centered has-text-centered">
+            <p><b>Arbitrary body shape and text input</b></p>
+            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
+              <source src="./static/videos/section1/2_shape_text.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column is-centered has-text-centered">
+              <p><b>Example-based characterization</b></p>
+              <video id="locomotion-control-video" loop muted playsinline controls width="100%">
+                <source src="./static/videos/section1/1_example_compress1.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="column is-centered has-text-centered">
+              <p><b>Applicable to various 3D character models</b></p>
+              <video id="locomotion-control-video" loop muted playsinline controls width="100%">
+                <source src="./static/videos/section1/3_wild_character.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <section class="hero is-small ">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-full has-text-centered">
+            <h2 class="title is-3">System Overview</h2>
+            <div class="content has-text-justified">
+              <p>The core of our system is a multi-conditional generative model that synthesizes future motion based on the character's past motion, user-defined control signals, and desired characteristics specified via an SMPL-X shape vector and a textual description.
+                For more details, please refer to our paper.
+              </p>
+            </div>
+            <img src="./static/figures/network.jpg" width="100%">
+            <div class="content has-text-centered">
+              <p>
+                <small><b>The diffusion model runs in an autoregressive manner, generating future motion
+                    conditioned on past motion and multiple conditions.</b></small>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="column is-centered has-text-centered">
+          <h2 class="title is-3">MotionPersona Dataset</h2>
+          <div class="content has-text-justified">
+            <p>
+              Existing locomotion datasets are typically collected from a single subject or a small group
+              of subjects, lacking sufficient character-related motion variation. To address this
+              limitation, we have constructed a new dataset called the MotionPersona Dataset. This dataset
+              features diverse locomotion styles and includes human subjects with a wide range of physical
+              and mental states, such as body shape, age, gender, emotion, and personality. To date, our
+              dataset is the most comprehensive locomotion dataset in terms of the character variation,
+              and data scale.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-full has-text-centered">
+            <p style="text-align: center;"><b>The comparison of the MotionPersona dataset with the existing
+                locomotion datasets</b></p>
+            <img src="./static/figures/dataset.jpg" width="100%">
+          </div>
+        </div>
+      </div>
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-full has-text-centered">
+            <p style="text-align: center; padding-bottom: 20px;"><b>Samples from MotionPersona dataset
+                dataset</b></p>
+
+
+            <section class="video-gallery is-full has-text-centered ">
+              <div id="gallery"></div>
+              <div class="controls">
+                <button onclick="prevSlide()">&#10094;</button>
+                <button onclick="nextSlide()">&#10095;</button>
+              </div>
+
+              <script>
+
+                const fixedVideoSources = [
+                  "./static/videos/section_dataset/shapes.mp4",
+                ]
+
+                const videoSources = [
+                "./static/videos/section_dataset/style_neutral.mp4",
+                  "./static/videos/section_dataset/style_angry.mp4",
+                  "./static/videos/section_dataset/style_happy.mp4",
+                  "./static/videos/section_dataset/style_depressed.mp4",
+                  "./static/videos/section_dataset/style_drunk.mp4",
+                  "./static/videos/section_dataset/style_fear.mp4",
+                  "./static/videos/section_dataset/style_excited.mp4",
+                  "./static/videos/section_dataset/style_refreshed.mp4",
+                ];
+
+                const videoNames = [
+                  "Shapes",
+                  "Neutral",
+                  "Angry",
+                  "Happy",
+                  "Depressed",
+                  "Drunk",
+                  "fearful",
+                  "excited",
+                  "refreshed",
+                ];
+
+                let index = 0;
+                const gallery = document.getElementById("gallery");
+                const videoElements = [];
+
+                // Preload all videos once
+                function preloadVideos() {
+                  // First add the fixed video that will always be shown
+                  const fixedWrapper = document.createElement("div");
+                  fixedWrapper.classList.add("video-container", "fixed-video", "active");
+
+                  const fixedVideo = document.createElement("video");
+                  fixedVideo.src = fixedVideoSources[0];
+                  fixedVideo.autoplay = true;
+                  fixedVideo.loop = true;
+                  fixedVideo.muted = true;
+                  fixedVideo.oncontextmenu = () => false;
+                  // Removed grayscale filter to prevent white-black appearance
+                  fixedVideo.style.filter = "brightness(130%)";
+
+                  const fixedCaption = document.createElement("p");
+                  fixedCaption.textContent = videoNames[0];
+
+                  fixedWrapper.appendChild(fixedVideo);
+                  fixedWrapper.appendChild(fixedCaption);
+                  gallery.appendChild(fixedWrapper);
+
+                  // Then add the rest of the videos
+                  videoSources.forEach((src, i) => {
+                    const wrapper = document.createElement("div");
+                    wrapper.classList.add("video-container");
+
+                    const video = document.createElement("video");
+                    video.src = src;
+                    video.autoplay = true;
+                    video.loop = true;
+                    video.muted = true;
+                    video.oncontextmenu = () => false;
+                    video.style.filter = "grayscale(100%) brightness(130%)";
+
+                    const caption = document.createElement("p");
+                    caption.textContent = videoNames[i + 1]; // +1 because first name is used for fixed video
+
+                    wrapper.appendChild(video);
+                    wrapper.appendChild(caption);
+                    gallery.appendChild(wrapper);
+                    videoElements.push(wrapper);
+                  });
+                }
+
+                // Only show fixed video + 3 more videos at a time
+                function updateGallery() {
+                  videoElements.forEach((el) => el.classList.remove("active"));
+                  for (let i = 0; i < 3; i++) {
+                    let videoIndex = (index + i) % videoSources.length;
+                    videoElements[videoIndex].classList.add("active");
+                  }
+                  updateProgressIndicators();
+                }
+
+                function nextSlide() {
+                  index = (index + 3) % videoSources.length;
+                  updateGallery();
+                }
+
+                function prevSlide() {
+                  index = (index - 3 + videoSources.length) % videoSources.length;
+                  updateGallery();
+                }
+
+                // Create progress indicators
+                function createProgressIndicators() {
+                  const indicatorsContainer = document.createElement("div");
+                  indicatorsContainer.classList.add("progress-indicators");
+                  indicatorsContainer.style.display = "flex";
+                  indicatorsContainer.style.justifyContent = "center";
+                  indicatorsContainer.style.marginTop = "1rem";
+
+                  const totalGroups = Math.ceil(videoSources.length / 3);
+
+                  for (let i = 0; i < totalGroups; i++) {
+                    const indicator = document.createElement("div");
+                    indicator.classList.add("progress-indicator");
+                    indicator.style.width = "10px";
+                    indicator.style.height = "10px";
+                    indicator.style.borderRadius = "50%";
+                    indicator.style.backgroundColor = "#ccc";
+                    indicator.style.margin = "0 5px";
+                    indicator.style.cursor = "pointer";
+
+                    indicator.addEventListener("click", () => {
+                      index = i * 3;
+                      updateGallery();
+                    });
+
+                    indicatorsContainer.appendChild(indicator);
+                  }
+
+                  gallery.parentNode.insertBefore(indicatorsContainer, gallery.nextSibling);
+                  return indicatorsContainer;
+                }
+
+                // Update progress indicators
+                function updateProgressIndicators() {
+                  const indicators = document.querySelectorAll(".progress-indicator");
+                  const activeGroup = Math.floor(index / 3);
+
+                  indicators.forEach((indicator, i) => {
+                    if (i === activeGroup) {
+                      indicator.style.backgroundColor = "#3273dc";
+                      indicator.style.transform = "scale(1.2)";
+                    } else {
+                      indicator.style.backgroundColor = "#ccc";
+                      indicator.style.transform = "scale(1)";
+                    }
+                  });
+                }
+
+                preloadVideos();
+                createProgressIndicators();
+                updateGallery();
+              </script>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="column is-centered has-text-centered">
+          <h2 class="title is-3">Real-time Control Results</h2>
+          <div class="content has-text-justified">
+            <p>
+              With a single, unified controller (3M parameters, 22 MB ONNX model), our system enables real-time control of arbitrary characters. Below, we present video recordings of our real-time demo, showcasing dynamic text input, adjustable body shape parameters, and simultaneous control of multiple characters via batch inference.
+
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+          <div class="column is-centered has-text-centered">
+            <p style="padding-bottom: 1rem;"><b>Varying Text Input</b></p>
+            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
+              <source src="./static/videos/section_update_value/text_update.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="column is-centered has-text-centered">
+            <p style="padding-bottom: 1rem;"><b>Adjustable body shape parameters
+            </b></p>
+            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
+              <source src="./static/videos/section_update_value/shape_update.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="column is-centered has-text-centered">
+            <p style="padding-bottom: 1rem;"><b>Multi-character control via batch inference
+            </b></p>
+            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
+              <source src="./static/videos/section_update_value/perspective.mp4" type="video/mp4">
+            </video>
+          </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="column is-centered has-text-centered">
+          <h2 class="title is-3">Generalization to Unseen Characters</h2>
+          <div class="content has-text-justified">
+            <p>
+              We evaluate the generalization capability of our method on a test set comprising 600 character specifications, generated by large language models and unseen during training. The distribution of both training and test data is shown on the left.
+
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-centered has-text-centered">
+            <p><b>The distribution of the test set and training set</b></p>
+            <img src="./static/videos/section_600/latent_space_visualization.jpg" width="100%">
+          </div>
+          <div class="column is-centered has-text-centered">
+            <p><b>Real-time control of test characters            </b></p>
+            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
+              <source src="./static/videos/section_600/600-subject.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="column is-centered has-text-centered">
+          <h2 class="title is-3">Example-based Characterization</h2>
+          <div class="content has-text-justified">
+            <p>
+              Our model supports controller characterization with a few short motion clips. As shown below, we use a short motion clip (~10 seconds) captured from multiple performers, and then incrementally implant these unique characters into our pre-trained base controller. This technique enables the generation of motions that lie outside the training distribution and offers a fast, accurate way to produce motions that are difficult to describe using natural language.
+
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-centered has-text-centered">
+
+            <section class="video-gallery is-full has-text-centered ">
+              <div id="example_gallery"></div>
+              <div class="controls">
+                <button onclick="prevExampleSlide()">&#10094;</button>
+                <button onclick="nextExampleSlide()">&#10095;</button>
+              </div>
+              <script>
+                // Define video sources for the example-based characterization section
+                const exampleVideoSources = [
+                  "./static/videos/section_example/example_1.mp4",
+                  "./static/videos/section_example/example_2.mp4",
+                  "./static/videos/section_example/example_3.mp4",
+                  "./static/videos/section_example/example_4.mp4",
+                  "./static/videos/section_example/example_5.mp4",
+                  "./static/videos/section_example/example_6.mp4",
+                  "./static/videos/section_example/example_7.mp4",
+                ];
+
+                const exampleVideoNames = [
+                  "Example 1",
+                  "Example 2",
+                  "Example 3",
+                  "Example 4",
+                  "Example 5",
+                  "Example 6",
+                  "Example 7",
+                ];
+
+                let exampleIndex = 0;
+                const exampleGallery = document.getElementById("example_gallery");
+                const exampleVideoElements = [];
+
+                // Functions to navigate through example videos
+                function prevExampleSlide() {
+                  exampleIndex = (exampleIndex - 2 + exampleVideoSources.length) % exampleVideoSources.length;
+                  updateExampleGallery();
+                  updateExampleProgressIndicators();
+                }
+
+                function nextExampleSlide() {
+                  exampleIndex = (exampleIndex + 2) % exampleVideoSources.length;
+                  updateExampleGallery();
+                  updateExampleProgressIndicators();
+                }
+
+                // Update the example gallery display
+                function updateExampleGallery() {
+                  // Create a new container to replace the old one to prevent flickering
+                  const newGalleryContent = document.createElement("div");
+                  newGalleryContent.style.display = "flex";
+                  newGalleryContent.style.justifyContent = "center";
+                  newGalleryContent.style.gap = "20px";
+
+                  for (let i = 0; i < 2; i++) {
+                    const currentIndex = (exampleIndex + i) % exampleVideoSources.length;
+                    const videoContainer = document.createElement("div");
+                    videoContainer.classList.add("video-container", "active");
+                    videoContainer.style.width = "40%";
+
+                    const video = document.createElement("video");
+                    video.src = exampleVideoSources[currentIndex];
+                    video.autoplay = true;
+                    video.loop = true;
+                    video.muted = true;
+                    video.oncontextmenu = () => false;
+                    video.style.width = "100%";
+                    // Preload the video to reduce flickering
+                    video.preload = "auto";
+
+                    const caption = document.createElement("p");
+                    caption.textContent = exampleVideoNames[currentIndex];
+
+                    videoContainer.appendChild(video);
+                    videoContainer.appendChild(caption);
+                    newGalleryContent.appendChild(videoContainer);
+                  }
+
+                  // Replace the gallery content with smooth transition
+                  exampleGallery.innerHTML = "";
+                  exampleGallery.appendChild(newGalleryContent);
+                }
+
+                // Initialize the example gallery
+                function initExampleGallery() {
+                  // Add CSS to reduce flickering
+                  const style = document.createElement('style');
+                  style.textContent = `
+                    #example_gallery {
+                      min-height: 280px; /* Set a fixed minimum height */
+                      position: relative;
+                    }
+                  `;
+                  document.head.appendChild(style);
+                  
+                  updateExampleGallery();
+                  createExampleProgressIndicators();
+                }
+
+                // Create progress indicators for example gallery
+                function createExampleProgressIndicators() {
+                  const indicatorsContainer = document.createElement("div");
+                  indicatorsContainer.classList.add("progress-indicators");
+                  indicatorsContainer.style.display = "flex";
+                  indicatorsContainer.style.justifyContent = "center";
+                  indicatorsContainer.style.marginTop = "10px";
+
+                  const totalGroups = Math.ceil(exampleVideoSources.length / 2);
+
+                  for (let i = 0; i < totalGroups; i++) {
+                    const indicator = document.createElement("div");
+                    indicator.classList.add("example-progress-indicator");
+                    indicator.style.width = "10px";
+                    indicator.style.height = "10px";
+                    indicator.style.borderRadius = "50%";
+                    indicator.style.backgroundColor = "#ccc";
+                    indicator.style.margin = "0 5px";
+                    indicator.style.cursor = "pointer";
+                    indicator.style.transition = "background-color 0.3s, transform 0.3s";
+
+                    indicator.addEventListener("click", () => {
+                      exampleIndex = i * 2;
+                      updateExampleGallery();
+                      updateExampleProgressIndicators();
+                    });
+
+                    indicatorsContainer.appendChild(indicator);
+                  }
+
+                  exampleGallery.parentNode.insertBefore(indicatorsContainer, exampleGallery.nextSibling);
+                  updateExampleProgressIndicators();
+                }
+
+                // Update example progress indicators
+                function updateExampleProgressIndicators() {
+                  const indicators = document.querySelectorAll(".example-progress-indicator");
+                  const activeGroup = Math.floor(exampleIndex / 2);
+
+                  indicators.forEach((indicator, i) => {
+                    if (i === activeGroup) {
+                      indicator.style.backgroundColor = "#3273dc";
+                      indicator.style.transform = "scale(1.2)";
+                    } else {
+                      indicator.style.backgroundColor = "#ccc";
+                      indicator.style.transform = "scale(1)";
+                    }
+                  });
+                }
+
+                // Initialize the gallery when the DOM is loaded
+                document.addEventListener("DOMContentLoaded", function () {
+                  // Preload all videos to reduce flickering
+                  exampleVideoSources.forEach(src => {
+                    const preloadVideo = document.createElement('video');
+                    preloadVideo.src = src;
+                    preloadVideo.style.display = 'none';
+                    preloadVideo.preload = 'auto';
+                    document.body.appendChild(preloadVideo);
+                    setTimeout(() => document.body.removeChild(preloadVideo), 5000);
+                  });
+                  
+                  initExampleGallery();
+                });
+              </script>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="column is-centered has-text-centered">
+          <h2 class="title is-3">Animating AIGC Characters</h2>
+          <div class="content has-text-justified">
+            <p>
+              Our method can also be adapted to support animating humanoid AIGC characters. Since these characters lack explicit shape parameters, we train a variant of our model that accepts bone lengths as input instead of shape vectors. The text input can be easily annotated by the user.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-centered has-text-centered">
+
+            <section class="video-gallery is-full has-text-centered ">
+              <div id="aigc_gallery"></div>
+              <div class="controls">
+                <button onclick="prevAigcSlide()">&#10094;</button>
+                <button onclick="nextAigcSlide()">&#10095;</button>
+              </div>
+              <script>
+                // Define video sources for the example-based characterization section
+                const aigcVideoSources = [
+                  "./static/videos/section_aigc/boy.mp4",
+                  "./static/videos/section_aigc/hulk.mp4",
+                  "./static/videos/section_aigc/ninja.mp4",
+                  "./static/videos/section_aigc/robot.mp4",
+                  "./static/videos/section_aigc/zombie.mp4"
+                ];
+
+                const aigcVideoNames = [
+                  "Example 1",
+                  "Example 2",
+                  "Example 3",
+                  "Example 4",
+                  "Example 5",
+                  "Example 6",
+                  "Example 7",
+                ];
+
+                let aigcIndex = 0;
+                const aigcGallery = document.getElementById("aigc_gallery");
+                const aigcVideoElements = [];
+
+                // Functions to navigate through example videos
+                function prevAigcSlide() {
+                  aigcIndex = (aigcIndex - 2 + aigcVideoSources.length) % aigcVideoSources.length;
+                  updateAigcGallery();
+                  updateAigcProgressIndicators();
+                }
+
+                function nextAigcSlide() {
+                  aigcIndex = (aigcIndex + 2) % aigcVideoSources.length;
+                  updateAigcGallery();
+                  updateAigcProgressIndicators();
+                }
+
+                // Update the example gallery display
+                function updateAigcGallery() {
+                  // Create a new container to replace the old one to prevent flickering
+                  const newGalleryContent = document.createElement("div");
+                  newGalleryContent.style.display = "flex";
+                  newGalleryContent.style.justifyContent = "center";
+                  newGalleryContent.style.gap = "20px";
+
+                  for (let i = 0; i < 2; i++) {
+                    const currentIndex = (aigcIndex + i) % aigcVideoSources.length;
+                    const videoContainer = document.createElement("div");
+                    videoContainer.classList.add("video-container", "active");
+                    videoContainer.style.width = "40%";
+
+                    const video = document.createElement("video");
+                    video.src = aigcVideoSources[currentIndex];
+                    video.autoplay = false;
+                    video.loop = true;
+                    video.muted = true;
+                    video.controls = true;
+                    video.oncontextmenu = () => false;
+                    video.style.width = "100%";
+                    // Preload the video to reduce flickering
+                    video.preload = "auto";
+
+                    const caption = document.createElement("p");
+                    caption.textContent = aigcVideoNames[currentIndex];
+
+                    videoContainer.appendChild(video);
+                    videoContainer.appendChild(caption);
+                    newGalleryContent.appendChild(videoContainer);
+                  }
+
+                  // Replace the gallery content with smooth transition
+                  aigcGallery.innerHTML = "";
+                  aigcGallery.appendChild(newGalleryContent);
+                }
+
+                // Initialize the example gallery
+                function initAigcGallery() {
+                  // Add CSS to reduce flickering
+                  const style = document.createElement('style');
+                  style.textContent = `
+                    #example_gallery {
+                      min-height: 280px; /* Set a fixed minimum height */
+                      position: relative;
+                    }
+                  `;
+                  document.head.appendChild(style);
+                  
+                  updateAigcGallery();
+                  createAigcProgressIndicators();
+                }
+
+                // Create progress indicators for example gallery
+                function createAigcProgressIndicators() {
+                  const indicatorsContainer = document.createElement("div");
+                  indicatorsContainer.classList.add("progress-indicators");
+                  indicatorsContainer.style.display = "flex";
+                  indicatorsContainer.style.justifyContent = "center";
+                  indicatorsContainer.style.marginTop = "10px";
+
+                  const totalGroups = Math.ceil(aigcVideoSources.length / 2);
+
+                  for (let i = 0; i < totalGroups; i++) {
+                    const indicator = document.createElement("div");
+                    indicator.classList.add("example-progress-indicator");
+                    indicator.style.width = "10px";
+                    indicator.style.height = "10px";
+                    indicator.style.borderRadius = "50%";
+                    indicator.style.backgroundColor = "#ccc";
+                    indicator.style.margin = "0 5px";
+                    indicator.style.cursor = "pointer";
+                    indicator.style.transition = "background-color 0.3s, transform 0.3s";
+
+                    indicator.addEventListener("click", () => {
+                      aigcIndex = i * 2;
+                      updateAigcGallery();
+                      updateAigcProgressIndicators();
+                    });
+
+                    indicatorsContainer.appendChild(indicator);
+                  }
+
+                  aigcGallery.parentNode.insertBefore(indicatorsContainer, aigcGallery.nextSibling);
+                  updateAigcProgressIndicators();
+                }
+
+                // Update example progress indicators
+                function updateAigcProgressIndicators() {
+                  const indicators = document.querySelectorAll(".example-progress-indicator");
+                  const activeGroup = Math.floor(aigcIndex / 2);
+
+                  indicators.forEach((indicator, i) => {
+                    if (i === activeGroup) {
+                      indicator.style.backgroundColor = "#3273dc";
+                      indicator.style.transform = "scale(1.2)";
+                    } else {
+                      indicator.style.backgroundColor = "#ccc";
+                      indicator.style.transform = "scale(1)";
+                    }
+                  });
+                }
+
+                // Initialize the gallery when the DOM is loaded
+                document.addEventListener("DOMContentLoaded", function () {
+                  // Preload all videos to reduce flickering
+                  aigcVideoSources.forEach(src => {
+                    const preloadVideo = document.createElement('video');
+                    preloadVideo.src = src;
+                    preloadVideo.style.display = 'none';
+                    preloadVideo.preload = 'auto';
+                    document.body.appendChild(preloadVideo);
+                    setTimeout(() => document.body.removeChild(preloadVideo), 5000);
+                  });
+                  
+                  initAigcGallery();
+                });
+              </script>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small is-light">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="column is-centered has-text-centered">
+          <h2 class="title is-3">Ablation Study</h2>
+          <div class="content has-text-justified">
+            <p>
+              We conduct ablation studies to evaluate the contribution of different components of our method.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-centered has-text-centered">
+            <p><b>Without in-diffusion blending</b></p>
+            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
+              <source src="./static/videos/ablation/aba_blending.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="column is-centered has-text-centered">
+            <p><b>Without Shape Augmentation</b></p>
+            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
+              <source src="./static/videos/ablation/aba_shape.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <footer class="footer">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+              href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+              Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            Website source code based on the <a href="https://nerfies.github.io/"> Nerfies</a> project page.
+            If
+            you want to reuse their <a href="https://github.com/nerfies/nerfies.github.io">source code</a>,
+            please credit them
+            appropriately.
+          </p>
+        </div>
+      </div>
+    </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
