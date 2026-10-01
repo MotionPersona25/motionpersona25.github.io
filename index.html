@@ -1,956 +1,276 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta property="og:title" content="MotionPersona: Characteristics-aware Locomotion Control" />
-
-  <title>MotionPersona: Characteristics-aware Locomotion Control</title>
-
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
-
-  <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="static/css/index.css">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="static/js/fontawesome.all.min.js"></script>
-  <script src="static/js/bulma-carousel.min.js"></script>
-  <script src="static/js/bulma-slider.min.js"></script>
-  <script src="static/js/index.js"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MotionPersona: Real-Time Locomotion Control across Personas, Bodies, and Styles</title>
+  <meta name="description" content="A generative locomotion controller with three independent controls: a captured motion persona, a target body shape, and a performed style. One 36M-parameter model, real time on a laptop CPU.">
+  <meta property="og:title" content="MotionPersona: Real-Time Locomotion Control across Personas, Bodies, and Styles">
+  <meta property="og:description" content="One real-time controller, three independent controls: persona, body, style.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://motionpersona25.github.io/">
+  <meta property="og:image" content="https://motionpersona25.github.io/assets/img/crowd.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css">
 </head>
-
 <body>
 
+<nav class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">MotionPersona</a>
+    <div class="nav-right">
+    <div class="nav-links">
+      <a href="#controls">Controls</a>
+      <a href="#realtime">Demo</a>
+      <a href="#data">Data</a>
+      <a href="#viewer">Viewer</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      
+    </div>
+    <a class="nav-cta" href="https://arxiv.org/abs/2506.00173">Paper</a>
+    </div>
+  </div>
+</nav>
 
-  <section class="publication-header">
-    <div class="hero-body">
-      <div class="container is-max-widescreen">
-        <!-- <div class="columns is-centered"> -->
-        <div class="column has-text-centered">
-          <h1 class="title is-2 publication-title">MotionPersona: <br> Characteristics-aware Locomotion Control
-          </h1>
-          <h2 class="subtitle is-4" style="font-family: Georgia, serif; margin-top: 1rem;"><i> - One word? Diversification.</i></h2>
-        </div>
+<header class="hero" id="top">
+  <div class="wrap-wide">
+    <p class="eyebrow">Real-time character animation</p>
+    <h1>MotionPersona</h1>
+    <p class="subtitle">Real-Time Locomotion Control across <span class="c-persona">Personas</span>, <span class="c-body">Bodies</span>, and <span class="c-style">Styles</span></p>
+
+    <div class="buttons">
+      <a class="btn primary" href="https://arxiv.org/abs/2506.00173"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6zM14 3.5V8h4.5M9 13h6M9 17h6"/></svg>Paper</a>
+      <a class="btn" href="#realtime"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Demo</a>
+      <a class="btn" href="#video"><svg viewBox="0 0 24 24"><path d="M5 4l15 8-15 8z"/></svg>Video</a>
+      <a class="btn" href="https://github.com/AIGAnimation/MotionPersona"><svg viewBox="0 0 24 24"><path d="M9 19c-4 1-4-2-6-2m12 4v-3.500a3 3 0 0 0-1-2.500c3 0 6-1.500 6-6a4.600 4.600 0 0 0-1.300-3.200 4.200 4.200 0 0 0-.1-3.200s-1.100-.3-3.500 1.300a12 12 0 0 0-6.200 0C6.500 2.800 5.400 3.100 5.400 3.100a4.200 4.200 0 0 0-.1 3.200A4.600 4.600 0 0 0 4 9.500c0 4.600 3 6 6 6a3 3 0 0 0-1 2.500V21"/></svg>Code</a>
+      <a class="btn" href="https://huggingface.co/myshi/MotionPersona_V1"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.500v9L12 21l-8-4.500v-9zM12 12l8-4.500M12 12v9M12 12L4 7.500"/></svg>Model</a>
+      <a class="btn" href="https://huggingface.co/datasets/myshi/MotionPersonaX"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.700 3.600 3 8 3s8-1.300 8-3V6M4 12v6c0 1.700 3.600 3 8 3s8-1.300 8-3v-6"/></svg>Dataset</a>
+    </div>
+  </div>
+
+  <div class="wrap-wide">
+    <figure class="media hero-media">
+      <video autoplay muted loop playsinline preload="auto" poster="assets/img/crowd.jpg" data-src="assets/video/crowd.mp4"></video>
+      <figcaption>Forty-four characters generated by one model, each conditioned on the persona and body shape of one captured participant, following the same straight path; the formation spreads because longer legs travel faster.</figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap lede">
+    <p>A generative locomotion controller with three controls: a captured motion <b class="c-persona">persona</b> (who is moving), a target <b class="c-body">body</b> (an SMPL-X body shape that carries the motion) and a performed <b class="c-style">style</b> (how the character is moving), under a trajectory command. One model covers 44 captured personas, a wide family of SMPL-X bodies and nine styles.</p>
+    <p>The controller is small: <b>36M parameters</b> (175&nbsp;MB), and it <b>runs in real time on a CPU</b>, at 27&nbsp;ms per block on two threads of a laptop CPU. It is trained on <b>thousands of hours of motion</b>: <a href="https://huggingface.co/datasets/myshi/MotionPersonaX">MotionPersonaX</a> holds 4,200 hours (33 hours of captured takes retargeted onto 128 bodies), and after the evaluation split is held out the VAE trains on 3,700 hours and the prior on 2,500 hours. Training is <b>efficient</b>: both stages finish in <b>about 30 hours on consumer GPUs</b>, under 100 GPU-hours in total (VAE: ~10&nbsp;h on 2&times; RTX&nbsp;4090; prior: ~19&nbsp;h on 4&times; RTX&nbsp;4090).</p>
+  </div>
+</header>
+
+<main>
+
+<section class="band" id="video">
+  <div class="wrap">
+    <p class="kicker">Overview video</p>
+    <figure class="media">
+      <video controls preload="none" playsinline poster="assets/img/full.jpg" src="assets/video/full.mp4"></video>
+    </figure>
+  </div>
+</section>
+<section id="controls">
+  <div class="wrap">
+    <p class="kicker">01 &middot; Controls</p>
+    <h2>Change one dial, the other two stay put</h2>
+    <p class="section-lead">Same command every time. <b class="c-persona">Persona</b> is a real performer's movement signature, <b class="c-body">body</b> is the SMPL-X shape that carries it, <b class="c-style">style</b> is how they move (happy, drunk, swimming&hellip;).</p>
+
+
+    <div class="tabs" data-tabs>
+      <div class="tab-bar" role="tablist">
+        <button role="tab" class="persona active" data-video="assets/video/persona.mp4" data-poster="assets/img/persona.jpg" data-cap="Top row: same person, five bodies, same rhythm. Bottom row: five people, same body, five different gaits.">Persona <small>who</small></button>
+        <button role="tab" class="body" data-video="assets/video/body.mp4" data-poster="assets/img/body.jpg" data-cap="One persona on five bodies, narrowest to widest hips. Forward trunk lean follows the hip width (&minus;5.8&deg; to &minus;0.3&deg;), while cadence and normalised step length are preserved.">Body <small>which body</small></button>
+        <button role="tab" class="style" data-video="assets/video/style.mp4" data-poster="assets/img/style.jpg" data-cap="One persona, nine styles. The style is switched on the fly while the character keeps walking.">Style <small>how</small></button>
+      </div>
+      <figure class="media">
+        <video muted loop playsinline preload="none" poster="assets/img/persona.jpg" data-src="assets/video/persona.mp4"></video>
+        <figcaption data-caption>Top row: same person, five bodies, same rhythm. Bottom row: five people, same body, five different gaits.</figcaption>
+      </figure>
+    </div>
+
+  </div>
+</section>
+
+<section class="band" id="realtime">
+  <div class="wrap">
+    <p class="kicker">02 &middot; Demo</p>
+    <h2>Run it yourself</h2>
+    <p class="section-lead">Steer with the keyboard or a gamepad, switch persona and style, and drag ten body-shape sliders mid-walk. Raw model output, no foot IK. It runs locally: a Python install plus a free-for-research SMPL-X licence.</p>
+    <div class="grid four">
+      <figure class="media"><video muted loop playsinline preload="none" poster="assets/img/rt_steer.jpg" data-src="assets/video/rt_steer.mp4"></video><figcaption>Steering with the keyboard</figcaption></figure>
+      <figure class="media"><video muted loop playsinline preload="none" poster="assets/img/rt_style.jpg" data-src="assets/video/rt_style.mp4"></video><figcaption>Switching the style (swimming)</figcaption></figure>
+      <figure class="media"><video muted loop playsinline preload="none" poster="assets/img/rt_body.jpg" data-src="assets/video/rt_body.mp4"></video><figcaption>Reshaping the body with the sliders while walking</figcaption></figure>
+      <figure class="media"><video muted loop playsinline preload="none" poster="assets/img/rt_newbody.jpg" data-src="assets/video/rt_newbody.mp4"></video><figcaption>Same persona and style on the new body</figcaption></figure>
+    </div>
+    <p style="margin:28px 0 18px"><a class="btn primary" href="https://github.com/AIGAnimation/MotionPersona#realtime-demo">Get the demo</a></p>
+    <p class="note"><kbd>WASD</kbd> move &middot; <kbd>Shift</kbd> run &middot; <kbd>F</kbd> lock facing &middot; <kbd>[</kbd> <kbd>]</kbd> style &middot; <kbd>,</kbd> <kbd>.</kbd> persona &middot; <kbd>B</kbd> persona's own body. Run it with <code>python realtime_demo.py</code> (<a href="https://github.com/AIGAnimation/MotionPersona#realtime-demo">instructions</a>). Rendering uses <a href="https://github.com/facebookresearch/ai4animationpy">ai4animationpy</a>; the SMPL-X model file is downloaded separately under its own license.</p>
+  </div>
+</section>
+
+<section id="data">
+  <div class="wrap">
+    <p class="kicker">03 &middot; Data</p>
+    <h2>Capture, measure, then retarget</h2>
+    <p class="section-lead">A performer is captured in exactly one body, so the raw data cannot say which traits belong to the person and which to the body. We build the missing cross-body data in three steps.</p>
+
+    <ol class="steps">
+      <li><a href="#step-capture"><span class="n">1</span><b>Capture</b><span>48 performers repeat the same nine styles and seven commands.</span></a></li>
+      <li><a href="#step-measure"><span class="n">2</span><b>Measure</b><span>Find which gait traits actually follow the body. Only trunk lean does.</span></a></li>
+      <li><a href="#step-retarget"><span class="n">3</span><b>Retarget</b><span>Put every take on 128 bodies, changing only what the measurement says.</span></a></li>
+    </ol>
+
+    <div class="step" id="step-capture">
+      <h3 class="stage"><span class="num">1</span>Capture</h3>
+      <p><b>MotionPersona</b>: about 33 hours of motion from <b>48 performers aged 5 to 68</b>, recorded with optical motion capture. Everyone performs the same grid of nine styles &times; seven locomotion commands, so the effect of the person, of the style, and their interaction can be told apart. 44 performers also describe themselves with three persona attributes: role, affiliation and dominance.</p>
+    </div>
+
+    <div class="step" id="step-measure">
+      <h3 class="stage"><span class="num">2</span>Measure</h3>
+      <p>&ldquo;The same motion on another body&rdquo; has no unique answer, so we measure instead of guessing. Each of 27 gait descriptors is decomposed into a performer, a style and an interaction effect, and a trait is assigned to the body only if it survives an age control, holds in all nine styles, and is confirmed by twelve matched adult pairs that differ only in body.</p>
+      <div class="verdict">
+        <div class="v-change"><h5>Follows the body</h5><p>Forward and side trunk lean grow with hip width. The retargeter uses 150&deg; and 65&deg; per metre, between the matched-pair and the population slopes.</p></div>
+        <div class="v-keep"><h5>Stays with the performer</h5><p>Cadence, normalised step length, knee range, foot clearance, joint speed. A body-shape predictor explains at most 7.5&nbsp;% of the differences between performers.</p></div>
       </div>
     </div>
-  </section>
 
-  <section class="conference-name-block">
-    <div class="column has-text-centered">
-      <div class="title is-4 conference-name">
-        Anonymous authors
+    <div class="step" id="step-retarget">
+      <h3 class="stage"><span class="num">3</span>Retarget</h3>
+      <p><b>MotionPersonaX</b>: every annotated clip optimised onto <b>128 SMPL-X bodies</b> (the 48 captured ones plus 80 tiling heights of 1.05&ndash;1.95&nbsp;m against eight girths), giving <b>328,960 clips, about 4,200&nbsp;h</b>. The optimiser keeps the source timing, makes trunk lean follow the body, and fixes penetration, foot contact and balance on the new body.</p>
+      <div class="grid two pair" style="margin-top:28px">
+        <figure class="media">
+          <video muted loop playsinline preload="none" poster="assets/img/rx_lean_cadence.jpg" data-src="assets/video/rx_lean_cadence.mp4"></video>
+          <figcaption><b>Follows the measurement.</b> In the data, lean follows hip width (149.7&deg;/m against the 150&deg; target) while cadence and normalised step are identical on all three bodies.</figcaption>
+        </figure>
+        <figure class="media">
+          <video muted loop playsinline preload="none" poster="assets/img/rx_copy_vs_ours.jpg" data-src="assets/video/rx_copy_vs_ours.mp4"></video>
+          <figcaption><b>Beats a plain copy.</b> Watch the hand: the geometric copy (left) pushes it 9&nbsp;cm into the torso; the optimisation (right) cuts that to 2.6&nbsp;cm.</figcaption>
+        </figure>
       </div>
+      <p class="note">Body model, the eleven objective terms and the full measurement are in the <a href="https://huggingface.co/datasets/myshi/MotionPersonaX">MotionPersonaX dataset card</a>.</p>
     </div>
 
-    <div class="column has-text-centered">
+    
+  </div>
+</section>
 
-      <div class="publication-links">
-        <span class="link-block">
-          <a target="_blank" class="external-link button is-normal is-rounded is-light" style="color: #7a7a7a; cursor: default;" onclick="return false;">
-            <span class="icon"><i class="ai ai-arxiv"></i></span>
-            <span>Paper</span>
-          </a>
-        </span>
-
-
-        <span class="link-block">
-          <a target="_blank" class="external-link button is-normal is-rounded is-light" style="color: #7a7a7a; cursor: default;" onclick="return false;">
-            <span class="icon"><i class="fas fa-database"></i></span>
-            <span>Dataset (coming soon)</span>
-          </a>
-        </span>
-
-        <span class="link-block">
-          <a target="_blank" class="external-link button is-normal is-rounded" href="https://github.com/MotionPersona25/MotionPersona_Unity">
-            <span class="icon"><i class="fab fa-github"></i></span>
-            <span>Code</span>
-          </a>
-        </span>
-
-
-        <span class="link-block">
-          <a target="_blank" class="external-link button is-normal is-rounded" href="https://github.com/MotionPersona25/MotionPersona_Unity/releases">
-            <span class="icon"><i class="fas fa-gamepad"></i></span>
-            <span>Unity Demo</span>
-          </a>
-        </span>
-
-        <!-- <span class="link-block">
-          <a target="_blank" class="external-link button is-normal is-rounded">
-            <span class="icon"><i class="fab fa-youtube"></i></span>
-            <span>Video</span>
-          </a>
-        </span> -->
+<section class="band" id="viewer">
+  <div class="wrap">
+    <p class="kicker">04 &middot; Explore</p>
+    <h2>Browse the data in 3D</h2>
+    <div class="viewer-body">
+      <p class="section-lead">Any captured clip on the participant's SMPL-X body, and each participant's neutral walk retargeted onto any of the 128 bodies, streamed from the dataset and rendered in your browser.</p>
+      <div class="viewer-frame">
+        <iframe src="https://myshi-motionpersona-viewer.static.hf.space/index.html" title="MotionPersona data viewer" loading="lazy" allow="fullscreen"></iframe>
       </div>
+      <p class="note">Also available as a <a href="https://huggingface.co/spaces/myshi/MotionPersona-Viewer">full-page Space</a>; the data itself is on <a href="https://huggingface.co/datasets/myshi/MotionPersonaX">Hugging Face</a>.</p>
     </div>
+  </div>
+</section>
 
-  </section>
+<section id="method">
+  <div class="wrap">
+    <p class="kicker">05 &middot; Method</p>
+    <h2>How it works</h2>
+    <p class="section-lead"><b>Two components, one job each: a decoder that knows the body, and a prior that knows the person.</b></p>
+    <figure class="media plain">
+      <img src="assets/img/overview.png" alt="Model overview: (a) shape-aware VAE, (b) latent flow-matching prior" width="2000" height="581">
+    </figure>
+    <p>Motion is generated block by block: every block predicts the next 45 frames (1.5&nbsp;s at 30&nbsp;fps) from the last frames already played, and only the first few of them are committed (12 in the offline protocol, 3 to 12 in the realtime demo) before the next block is generated, so the character reacts to new commands within a fraction of a second. Each block passes through two stages, trained one after the other.</p>
 
-  <section class="hero teaser">
-    <div class="container is-max-desktop">
-      <div class="hero-body">
-        <div class="column is-centered has-text-centered">
-          <img src="static/figures/teaser.jpg" alt="breakdancing dragons" width="100%" />
-        </div>
+    <h3 class="stage"><span class="dot c-body-bg"></span>Stage 1: shape-aware VAE</h3>
+    <p>In panel (a), the encoder <i>E</i> compresses a 45-frame block <i>x</i> into a few latent tokens <i>z</i> (9 tokens of 48 dimensions). The decoder <i>D</i> turns <i>z</i> back into joint rotations, root motion and foot contacts <b>on a given body</b>: besides <i>z</i> it receives the body's 10 SMPL-X shape coefficients <i>&beta;</i> and the last frames of the motion so far (<i>x</i><sub>tail</sub>, the last 5 frames, so consecutive blocks join without a seam). It is trained with reconstruction, forward-kinematics and contact losses evaluated on the skeleton <i>S</i>(<i>&beta;</i>) of that body.</p>
+    <p>The decoder therefore owns everything that is geometry: where the feet land, how far a step reaches, how the pelvis and trunk sit on this body. The latent <i>z</i> keeps what the motion <em>is</em>, and <i>&beta;</i> decides how it is realised. Decoding one <i>z</i> sequence on different bodies gives the same motion carried by each of them:</p>
+    <figure class="media">
+      <video muted loop playsinline preload="none" poster="assets/img/vae_shape.jpg" data-src="assets/video/vae_shape.mp4"></video>
+      <figcaption>One sequence of latent tokens (p21, happy, sampled by the prior on its own body) decoded on four SMPL-X bodies. Timing and gestures are shared; stride, speed (1.00 to 1.23&nbsp;m/s) and posture follow the body.</figcaption>
+    </figure>
 
-        <h2 class="content has-text-centered">
-          We present the first <b>characteristics-aware</b> locomotion controller capable of generating high-quality animations that faithfully reflect the desired character characteristics while responding to dynamically varying locomotion control signals in real-time.
-        </h2>
-      </div>
+    <h3 class="stage"><span class="dot c-persona-bg"></span>Stage 2: latent flow-matching prior</h3>
+    <p>In panel (b), with the codec frozen, a transformer (8 DiT blocks) learns to generate the next block's latent tokens <i>z</i>. It is conditioned on the motion history (one token from the codec encoder), the commanded trajectory (45 future positions and facings), the <b class="c-persona">persona</b> (a learned performer-ID token plus role, affiliation and dominance attribute tokens), the <b class="c-style">style</b>, and the target <b class="c-body">body shape</b> <i>&beta;</i>. Sampling takes two Euler steps from Gaussian noise, after which the frozen decoder renders the tokens on the target body.</p>
+    <p>The prior chooses <em>which</em> motion this persona, in this style, would perform for this command on this body, in a space small enough for a real-time budget; the decoder fits the result to the body.</p>
+    <figure class="media">
+      <video muted loop playsinline preload="none" poster="assets/img/stream.jpg" data-src="assets/video/stream.mp4"></video>
+      <figcaption>Streaming rollout: a new block every 12 committed frames. Timeline recorded on an RTX 5080 (9.9&nbsp;ms per block against a 100&nbsp;ms budget); on two threads of a laptop CPU a block takes 27&nbsp;ms.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="band" id="results">
+  <div class="wrap">
+    <p class="kicker">06 &middot; Results</p>
+    <h2>Experimental Results</h2>
+    <p class="section-lead">The same gait descriptors from capture to generation, each control swept in isolation, compared against CAMDM, a state-of-the-art real-time diffusion controller trained on the same data.</p>
+    <div class="proof">
+      <div><b>1.0<small>&nbsp;%</small></b><span>of frames with a foot sole more than 1&nbsp;cm below the floor<br>(CAMDM: 49&nbsp;%)</span></div>
+      <div><b>63<small>&nbsp;%</small></b><span>of performers correctly identified from the generated motion (chance: 1 in 44)<br>(CAMDM: 32&nbsp;%)</span></div>
+      <div><b>4.17<small> / 5</small></b><span>match to the persona, 28 professionals<br>(CAMDM: 2.59)</span></div>
     </div>
-  </section>
-
-  <section class="section hero is-light">
-    <div class="container is-max-desktop">
-      <!-- Abstract. -->
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-full">
-          <h2 class="title is-3">Abstract</h2>
-          <div class="content has-text-justified">
-            <p>
-              We present <b>MotionPersona</b>, a novel real-time character controller that allows users to characterize their character by specifying various attributes and projecting them into the generated motions for animating the character. In contrast to existing deep learning-based controllers, which typically produce homogeneous animations tailored to a single, predefined character, MotionPersona accounts for the impact of various character traits on motion as observed in the real world. To achieve this, we develop an autoregressive motion diffusion model conditioned on SMPL-X parameters, textual prompts, and user-defined locomotion control signals. We also curate a comprehensive dataset featuring a wide range of locomotion types and actor traits to enable the training of this characteristic-aware controller. Compared to prior work, MotionPersona can generate motions that faithfully reflect user-specified characteristics (e.g., an elderly person's shuffling gait) while responding in real time to dynamic control inputs. Additionally, we introduce a few-shot characterization technique as a complementary conditioning mechanism, enabling controller customization via short motion clips when language prompts fall short. Through extensive experiments, we demonstrate that MotionPersona outperforms existing methods in characteristics-aware locomotion control, offering superior motion quality and diversity, and adherence to user-specified character traits.
-            </p>
-          </div>
-        </div>
-      </div>
-      <!--/ Abstract. -->
+    <p class="note proofnote">Own-body test set, one-minute rollouts. CAMDM is marginally better on pose FPD (0.30 against our 0.32), and the two are level on foot smoothness and dynamics spread; ours wins on floor contact, persona and style.</p>
+    <div class="grid two">
+      <figure class="media">
+        <video muted loop playsinline preload="none" poster="assets/img/floor.jpg" data-src="assets/video/floor.mp4"></video>
+        <figcaption><b>Keeping the floor.</b> The baseline loses the floor at both ends of the height range; ours keeps the feet where the data has them.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="none" poster="assets/img/avg.jpg" data-src="assets/video/avg.mp4"></video>
+        <figcaption><b>Not averaging people.</b> The baseline averages two performers' pelvis bob; ours keeps part of the difference present in the data.</figcaption>
+      </figure>
     </div>
-  </section>
+    <figure class="media" style="margin-top:32px">
+      <video muted loop playsinline preload="none" poster="assets/img/crossbody.jpg" data-src="assets/video/crossbody.mp4"></video>
+      <figcaption><b>Beyond the performer's own body.</b> One persona on its own body, on a training body it was seen on, on one it was withheld from, and on a body never seen in training.</figcaption>
+    </figure>
+  </div>
+</section>
 
-
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-full has-text-centered">
-            <h2 class="title is-3">Features</h2>
-            <div class="content has-text-justified">
-              <p>
-                <!-- Here we show the key features of our controller. -->
-              <ul></ul>
-              <li>
-                <b>Unified Multi-character Controller: </b> Our diffusion-based model offers robust real-time control over a wide range of characters, supporting various common locomotion gaits such as stop, walk, and run, all with a single, unified controller.
-              </li>
-              <li>
-                <b>Characteristics-aware Control: </b>  Users are allowed to characterize their own controller, by specifying their body shape and various character traits, represented by a SMPL-X vector and a text description, respectively.
-
-              </li>
-              <li>
-                <b>Example-based Characterization:</b> When language prompts fall short, the base controller can be easily adapted using our few-shot characterization method, allowing customization via short motion clips.
-              </li>
-              </ul>
-              </p>
-              <div style="padding-bottom: 1rem;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+<section id="applications">
+  <div class="wrap">
+    <p class="kicker">07 &middot; Extensions</p>
+    <h2>Beyond locomotion</h2>
+    <p class="section-lead">Both stages take their conditions as tokens, so a new task adds a token and retrains the prior. Two preliminary directions:</p>
+    <div class="grid two">
+      <figure class="media">
+        <video muted loop playsinline preload="none" poster="assets/img/inbetween.jpg" data-src="assets/video/inbetween.mp4"></video>
+        <figcaption><b>Character-aware in-betweening.</b> Same keyframes on a 105&nbsp;cm body: a method with no body input sinks the feet into the floor for the whole gap, ours keeps them where the data has them.</figcaption>
+      </figure>
+      <figure class="media">
+        <video muted loop playsinline preload="none" poster="assets/img/a2m.jpg" data-src="assets/video/a2m.mp4"></video>
+        <figcaption><b>Speech-driven gesture.</b> One speech clip of a BEAT2 speaker drives five other speakers on their own bodies, each in their own manner.</figcaption>
+      </figure>
     </div>
-  </section>
+  </div>
+</section>
 
 
-  <section class="hero is-small is-light">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-centered has-text-centered">
-            <p><b>Robust real-time locomotion control</b></p>
-            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
-              <source src="./static/videos/section1/1_runtime.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="column is-centered has-text-centered">
-            <p><b>Arbitrary body shape and text input</b></p>
-            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
-              <source src="./static/videos/section1/2_shape_text.mp4" type="video/mp4">
-            </video>
-          </div>
-        </div>
-        <div class="container is-max-desktop">
-          <div class="columns is-centered">
-            <div class="column is-centered has-text-centered">
-              <p><b>Example-based characterization</b></p>
-              <video id="locomotion-control-video" loop muted playsinline controls width="100%">
-                <source src="./static/videos/section1/1_example_compress1.mp4" type="video/mp4">
-              </video>
-            </div>
-            <div class="column is-centered has-text-centered">
-              <p><b>Applicable to various 3D character models</b></p>
-              <video id="locomotion-control-video" loop muted playsinline controls width="100%">
-                <source src="./static/videos/section1/3_wild_character.mp4" type="video/mp4">
-              </video>
-            </div>
-          </div>
-        </div>
-      </div>
+<section class="band" id="bibtex">
+  <div class="wrap">
+    <p class="kicker">08 &middot; Cite</p>
+    <h2>BibTeX</h2>
+    <div class="code">
+      <button class="copy" data-copy="bib">Copy</button>
+<pre id="bib">@article{shi2025motionpersona,
+  title   = {MotionPersona: Real-Time Locomotion Control across Personas, Bodies, and Styles},
+  journal = {arXiv preprint arXiv:2506.00173},
+  year    = {2025}
+}</pre>
     </div>
-  </section>
+  </div>
+</section>
 
+</main>
 
+<footer>
+  <div class="wrap">
+    <p>MotionPersona &middot; code and data released under CC BY-NC 4.0 &middot; &copy; 2025&ndash;2026</p>
+  </div>
+</footer>
 
-  <section class="hero is-small ">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-full has-text-centered">
-            <h2 class="title is-3">System Overview</h2>
-            <div class="content has-text-justified">
-              <p>The core of our system is a multi-conditional generative model that synthesizes future motion based on the character's past motion, user-defined control signals, and desired characteristics specified via an SMPL-X shape vector and a textual description.
-                For more details, please refer to our paper.
-              </p>
-            </div>
-            <img src="./static/figures/network.jpg" width="100%">
-            <div class="content has-text-centered">
-              <p>
-                <small><b>The diffusion model runs in an autoregressive manner, generating future motion
-                    conditioned on past motion and multiple conditions.</b></small>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="hero is-small is-light">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="column is-centered has-text-centered">
-          <h2 class="title is-3">MotionPersona Dataset</h2>
-          <div class="content has-text-justified">
-            <p>
-              Existing locomotion datasets are typically collected from a single subject or a small group
-              of subjects, lacking sufficient character-related motion variation. To address this
-              limitation, we have constructed a new dataset called the MotionPersona Dataset. This dataset
-              features diverse locomotion styles and includes human subjects with a wide range of physical
-              and mental states, such as body shape, age, gender, emotion, and personality. To date, our
-              dataset is the most comprehensive locomotion dataset in terms of the character variation,
-              and data scale.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-full has-text-centered">
-            <p style="text-align: center;"><b>The comparison of the MotionPersona dataset with the existing
-                locomotion datasets</b></p>
-            <img src="./static/figures/dataset.jpg" width="100%">
-          </div>
-        </div>
-      </div>
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-full has-text-centered">
-            <p style="text-align: center; padding-bottom: 20px;"><b>Samples from MotionPersona dataset
-                dataset</b></p>
-
-
-            <section class="video-gallery is-full has-text-centered ">
-              <div id="gallery"></div>
-              <div class="controls">
-                <button onclick="prevSlide()">&#10094;</button>
-                <button onclick="nextSlide()">&#10095;</button>
-              </div>
-
-              <script>
-
-                const fixedVideoSources = [
-                  "./static/videos/section_dataset/shapes.mp4",
-                ]
-
-                const videoSources = [
-                "./static/videos/section_dataset/style_neutral.mp4",
-                  "./static/videos/section_dataset/style_angry.mp4",
-                  "./static/videos/section_dataset/style_happy.mp4",
-                  "./static/videos/section_dataset/style_depressed.mp4",
-                  "./static/videos/section_dataset/style_drunk.mp4",
-                  "./static/videos/section_dataset/style_fear.mp4",
-                  "./static/videos/section_dataset/style_excited.mp4",
-                  "./static/videos/section_dataset/style_refreshed.mp4",
-                ];
-
-                const videoNames = [
-                  "Shapes",
-                  "Neutral",
-                  "Angry",
-                  "Happy",
-                  "Depressed",
-                  "Drunk",
-                  "fearful",
-                  "excited",
-                  "refreshed",
-                ];
-
-                let index = 0;
-                const gallery = document.getElementById("gallery");
-                const videoElements = [];
-
-                // Preload all videos once
-                function preloadVideos() {
-                  // First add the fixed video that will always be shown
-                  const fixedWrapper = document.createElement("div");
-                  fixedWrapper.classList.add("video-container", "fixed-video", "active");
-
-                  const fixedVideo = document.createElement("video");
-                  fixedVideo.src = fixedVideoSources[0];
-                  fixedVideo.autoplay = true;
-                  fixedVideo.loop = true;
-                  fixedVideo.muted = true;
-                  fixedVideo.oncontextmenu = () => false;
-                  // Removed grayscale filter to prevent white-black appearance
-                  fixedVideo.style.filter = "brightness(130%)";
-
-                  const fixedCaption = document.createElement("p");
-                  fixedCaption.textContent = videoNames[0];
-
-                  fixedWrapper.appendChild(fixedVideo);
-                  fixedWrapper.appendChild(fixedCaption);
-                  gallery.appendChild(fixedWrapper);
-
-                  // Then add the rest of the videos
-                  videoSources.forEach((src, i) => {
-                    const wrapper = document.createElement("div");
-                    wrapper.classList.add("video-container");
-
-                    const video = document.createElement("video");
-                    video.src = src;
-                    video.autoplay = true;
-                    video.loop = true;
-                    video.muted = true;
-                    video.oncontextmenu = () => false;
-                    video.style.filter = "grayscale(100%) brightness(130%)";
-
-                    const caption = document.createElement("p");
-                    caption.textContent = videoNames[i + 1]; // +1 because first name is used for fixed video
-
-                    wrapper.appendChild(video);
-                    wrapper.appendChild(caption);
-                    gallery.appendChild(wrapper);
-                    videoElements.push(wrapper);
-                  });
-                }
-
-                // Only show fixed video + 3 more videos at a time
-                function updateGallery() {
-                  videoElements.forEach((el) => el.classList.remove("active"));
-                  for (let i = 0; i < 3; i++) {
-                    let videoIndex = (index + i) % videoSources.length;
-                    videoElements[videoIndex].classList.add("active");
-                  }
-                  updateProgressIndicators();
-                }
-
-                function nextSlide() {
-                  index = (index + 3) % videoSources.length;
-                  updateGallery();
-                }
-
-                function prevSlide() {
-                  index = (index - 3 + videoSources.length) % videoSources.length;
-                  updateGallery();
-                }
-
-                // Create progress indicators
-                function createProgressIndicators() {
-                  const indicatorsContainer = document.createElement("div");
-                  indicatorsContainer.classList.add("progress-indicators");
-                  indicatorsContainer.style.display = "flex";
-                  indicatorsContainer.style.justifyContent = "center";
-                  indicatorsContainer.style.marginTop = "1rem";
-
-                  const totalGroups = Math.ceil(videoSources.length / 3);
-
-                  for (let i = 0; i < totalGroups; i++) {
-                    const indicator = document.createElement("div");
-                    indicator.classList.add("progress-indicator");
-                    indicator.style.width = "10px";
-                    indicator.style.height = "10px";
-                    indicator.style.borderRadius = "50%";
-                    indicator.style.backgroundColor = "#ccc";
-                    indicator.style.margin = "0 5px";
-                    indicator.style.cursor = "pointer";
-
-                    indicator.addEventListener("click", () => {
-                      index = i * 3;
-                      updateGallery();
-                    });
-
-                    indicatorsContainer.appendChild(indicator);
-                  }
-
-                  gallery.parentNode.insertBefore(indicatorsContainer, gallery.nextSibling);
-                  return indicatorsContainer;
-                }
-
-                // Update progress indicators
-                function updateProgressIndicators() {
-                  const indicators = document.querySelectorAll(".progress-indicator");
-                  const activeGroup = Math.floor(index / 3);
-
-                  indicators.forEach((indicator, i) => {
-                    if (i === activeGroup) {
-                      indicator.style.backgroundColor = "#3273dc";
-                      indicator.style.transform = "scale(1.2)";
-                    } else {
-                      indicator.style.backgroundColor = "#ccc";
-                      indicator.style.transform = "scale(1)";
-                    }
-                  });
-                }
-
-                preloadVideos();
-                createProgressIndicators();
-                updateGallery();
-              </script>
-            </section>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-
-  <section class="hero is-small is-light">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="column is-centered has-text-centered">
-          <h2 class="title is-3">Characteristics-aware Real-time Control Results</h2>
-          <div class="content has-text-justified">
-            <p>
-              With a single, unified controller (3M parameters, 22 MB ONNX model), our system enables real-time control of arbitrary characters. Below, we present video recordings of our real-time demo, showcasing dynamic text input, adjustable body shape parameters, and simultaneous control of multiple characters via batch inference.
-
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-          <div class="column is-centered has-text-centered">
-            <p style="padding-bottom: 1rem;"><b>Varying Text Input (shape condition is frozen ❄️)</b></p>
-            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
-              <source src="./static/videos/section_update_value/text_update.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="column is-centered has-text-centered">
-            <p style="padding-bottom: 1rem;"><b>Adjustable body shape parameters (text condition is frozen ❄️)</b></p>
-            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
-              <source src="./static/videos/section_update_value/shape_update.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="column is-centered has-text-centered">
-            <p style="padding-bottom: 1rem;"><b>Multi-character control via batch inference
-            </b></p>
-            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
-              <source src="./static/videos/section_update_value/perspective.mp4" type="video/mp4">
-            </video>
-          </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="hero is-small is-light">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="column is-centered has-text-centered">
-          <h2 class="title is-3">Generalization to Unseen Characters</h2>
-          <div class="content has-text-justified">
-            <p>
-              We evaluate the generalization capability of our method on a test set comprising 600 character specifications, generated by large language models and unseen during training. The distribution of both training and test data is shown on the left.
-
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-centered has-text-centered">
-            <p><b>The distribution of the test set and training set</b></p>
-            <img src="./static/videos/section_600/latent_space_visualization.jpg" width="100%">
-          </div>
-          <div class="column is-centered has-text-centered">
-            <p><b>Real-time control of test characters            </b></p>
-            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
-              <source src="./static/videos/section_600/600-subject.mp4" type="video/mp4">
-            </video>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="hero is-small is-light">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="column is-centered has-text-centered">
-          <h2 class="title is-3">Example-based Characterization</h2>
-          <div class="content has-text-justified">
-            <p>
-              Our model supports controller characterization with a few short motion clips. As shown below, we use a short motion clip (~10 seconds) captured from multiple performers, and then incrementally implant these unique characters into our pre-trained base controller. This technique enables the generation of motions that lie outside the training distribution and offers a fast, accurate way to produce motions that are difficult to describe using natural language.
-
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-centered has-text-centered">
-
-            <section class="video-gallery is-full has-text-centered ">
-              <div id="example_gallery"></div>
-              <div class="controls">
-                <button onclick="prevExampleSlide()">&#10094;</button>
-                <button onclick="nextExampleSlide()">&#10095;</button>
-              </div>
-              <script>
-                // Define video sources for the example-based characterization section
-                const exampleVideoSources = [
-                  "./static/videos/section_example/example_1.mp4",
-                  "./static/videos/section_example/example_2.mp4",
-                  "./static/videos/section_example/example_3.mp4",
-                  "./static/videos/section_example/example_4.mp4",
-                  "./static/videos/section_example/example_5.mp4",
-                  "./static/videos/section_example/example_6.mp4",
-                  "./static/videos/section_example/example_7.mp4",
-                ];
-
-                const exampleVideoNames = [
-                  "Example 1",
-                  "Example 2",
-                  "Example 3",
-                  "Example 4",
-                  "Example 5",
-                  "Example 6",
-                  "Example 7",
-                ];
-
-                let exampleIndex = 0;
-                const exampleGallery = document.getElementById("example_gallery");
-                const exampleVideoElements = [];
-
-                // Functions to navigate through example videos
-                function prevExampleSlide() {
-                  exampleIndex = (exampleIndex - 2 + exampleVideoSources.length) % exampleVideoSources.length;
-                  updateExampleGallery();
-                  updateExampleProgressIndicators();
-                }
-
-                function nextExampleSlide() {
-                  exampleIndex = (exampleIndex + 2) % exampleVideoSources.length;
-                  updateExampleGallery();
-                  updateExampleProgressIndicators();
-                }
-
-                // Update the example gallery display
-                function updateExampleGallery() {
-                  // Create a new container to replace the old one to prevent flickering
-                  const newGalleryContent = document.createElement("div");
-                  newGalleryContent.style.display = "flex";
-                  newGalleryContent.style.justifyContent = "center";
-                  newGalleryContent.style.gap = "20px";
-
-                  for (let i = 0; i < 2; i++) {
-                    const currentIndex = (exampleIndex + i) % exampleVideoSources.length;
-                    const videoContainer = document.createElement("div");
-                    videoContainer.classList.add("video-container", "active");
-                    videoContainer.style.width = "40%";
-
-                    const video = document.createElement("video");
-                    video.src = exampleVideoSources[currentIndex];
-                    video.autoplay = true;
-                    video.loop = true;
-                    video.muted = true;
-                    video.oncontextmenu = () => false;
-                    video.style.width = "100%";
-                    // Preload the video to reduce flickering
-                    video.preload = "auto";
-
-                    const caption = document.createElement("p");
-                    caption.textContent = exampleVideoNames[currentIndex];
-
-                    videoContainer.appendChild(video);
-                    videoContainer.appendChild(caption);
-                    newGalleryContent.appendChild(videoContainer);
-                  }
-
-                  // Replace the gallery content with smooth transition
-                  exampleGallery.innerHTML = "";
-                  exampleGallery.appendChild(newGalleryContent);
-                }
-
-                // Initialize the example gallery
-                function initExampleGallery() {
-                  // Add CSS to reduce flickering
-                  const style = document.createElement('style');
-                  style.textContent = `
-                    #example_gallery {
-                      min-height: 280px; /* Set a fixed minimum height */
-                      position: relative;
-                    }
-                  `;
-                  document.head.appendChild(style);
-                  
-                  updateExampleGallery();
-                  createExampleProgressIndicators();
-                }
-
-                // Create progress indicators for example gallery
-                function createExampleProgressIndicators() {
-                  const indicatorsContainer = document.createElement("div");
-                  indicatorsContainer.classList.add("progress-indicators");
-                  indicatorsContainer.style.display = "flex";
-                  indicatorsContainer.style.justifyContent = "center";
-                  indicatorsContainer.style.marginTop = "10px";
-
-                  const totalGroups = Math.ceil(exampleVideoSources.length / 2);
-
-                  for (let i = 0; i < totalGroups; i++) {
-                    const indicator = document.createElement("div");
-                    indicator.classList.add("example-progress-indicator");
-                    indicator.style.width = "10px";
-                    indicator.style.height = "10px";
-                    indicator.style.borderRadius = "50%";
-                    indicator.style.backgroundColor = "#ccc";
-                    indicator.style.margin = "0 5px";
-                    indicator.style.cursor = "pointer";
-                    indicator.style.transition = "background-color 0.3s, transform 0.3s";
-
-                    indicator.addEventListener("click", () => {
-                      exampleIndex = i * 2;
-                      updateExampleGallery();
-                      updateExampleProgressIndicators();
-                    });
-
-                    indicatorsContainer.appendChild(indicator);
-                  }
-
-                  exampleGallery.parentNode.insertBefore(indicatorsContainer, exampleGallery.nextSibling);
-                  updateExampleProgressIndicators();
-                }
-
-                // Update example progress indicators
-                function updateExampleProgressIndicators() {
-                  const indicators = document.querySelectorAll(".example-progress-indicator");
-                  const activeGroup = Math.floor(exampleIndex / 2);
-
-                  indicators.forEach((indicator, i) => {
-                    if (i === activeGroup) {
-                      indicator.style.backgroundColor = "#3273dc";
-                      indicator.style.transform = "scale(1.2)";
-                    } else {
-                      indicator.style.backgroundColor = "#ccc";
-                      indicator.style.transform = "scale(1)";
-                    }
-                  });
-                }
-
-                // Initialize the gallery when the DOM is loaded
-                document.addEventListener("DOMContentLoaded", function () {
-                  // Preload all videos to reduce flickering
-                  exampleVideoSources.forEach(src => {
-                    const preloadVideo = document.createElement('video');
-                    preloadVideo.src = src;
-                    preloadVideo.style.display = 'none';
-                    preloadVideo.preload = 'auto';
-                    document.body.appendChild(preloadVideo);
-                    setTimeout(() => document.body.removeChild(preloadVideo), 5000);
-                  });
-                  
-                  initExampleGallery();
-                });
-              </script>
-            </section>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="hero is-small is-light">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="column is-centered has-text-centered">
-          <h2 class="title is-3">Animating AIGC Characters</h2>
-          <div class="content has-text-justified">
-            <p>
-              Our method can also be adapted to support animating humanoid AIGC characters. Since these characters lack explicit shape parameters, we train a variant of our model that accepts bone lengths as input instead of shape vectors. The text input can be easily annotated by the user.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-centered has-text-centered">
-
-            <section class="video-gallery is-full has-text-centered ">
-              <div id="aigc_gallery"></div>
-              <div class="controls">
-                <button onclick="prevAigcSlide()">&#10094;</button>
-                <button onclick="nextAigcSlide()">&#10095;</button>
-              </div>
-              <script>
-                // Define video sources for the example-based characterization section
-                const aigcVideoSources = [
-                  "./static/videos/section_aigc/boy.mp4",
-                  "./static/videos/section_aigc/hulk.mp4",
-                  "./static/videos/section_aigc/ninja.mp4",
-                  "./static/videos/section_aigc/robot.mp4",
-                  "./static/videos/section_aigc/zombie.mp4"
-                ];
-
-                const aigcVideoNames = [
-                  "Example 1",
-                  "Example 2",
-                  "Example 3",
-                  "Example 4",
-                  "Example 5",
-                  "Example 6",
-                  "Example 7",
-                ];
-
-                let aigcIndex = 0;
-                const aigcGallery = document.getElementById("aigc_gallery");
-                const aigcVideoElements = [];
-
-                // Functions to navigate through example videos
-                function prevAigcSlide() {
-                  aigcIndex = (aigcIndex - 2 + aigcVideoSources.length) % aigcVideoSources.length;
-                  updateAigcGallery();
-                  updateAigcProgressIndicators();
-                }
-
-                function nextAigcSlide() {
-                  aigcIndex = (aigcIndex + 2) % aigcVideoSources.length;
-                  updateAigcGallery();
-                  updateAigcProgressIndicators();
-                }
-
-                // Update the example gallery display
-                function updateAigcGallery() {
-                  // Create a new container to replace the old one to prevent flickering
-                  const newGalleryContent = document.createElement("div");
-                  newGalleryContent.style.display = "flex";
-                  newGalleryContent.style.justifyContent = "center";
-                  newGalleryContent.style.gap = "20px";
-
-                  for (let i = 0; i < 2; i++) {
-                    const currentIndex = (aigcIndex + i) % aigcVideoSources.length;
-                    const videoContainer = document.createElement("div");
-                    videoContainer.classList.add("video-container", "active");
-                    videoContainer.style.width = "40%";
-
-                    const video = document.createElement("video");
-                    video.src = aigcVideoSources[currentIndex];
-                    video.autoplay = false;
-                    video.loop = true;
-                    video.muted = true;
-                    video.controls = true;
-                    video.oncontextmenu = () => false;
-                    video.style.width = "100%";
-                    // Preload the video to reduce flickering
-                    video.preload = "auto";
-
-                    const caption = document.createElement("p");
-                    caption.textContent = aigcVideoNames[currentIndex];
-
-                    videoContainer.appendChild(video);
-                    videoContainer.appendChild(caption);
-                    newGalleryContent.appendChild(videoContainer);
-                  }
-
-                  // Replace the gallery content with smooth transition
-                  aigcGallery.innerHTML = "";
-                  aigcGallery.appendChild(newGalleryContent);
-                }
-
-                // Initialize the example gallery
-                function initAigcGallery() {
-                  // Add CSS to reduce flickering
-                  const style = document.createElement('style');
-                  style.textContent = `
-                    #example_gallery {
-                      min-height: 280px; /* Set a fixed minimum height */
-                      position: relative;
-                    }
-                  `;
-                  document.head.appendChild(style);
-                  
-                  updateAigcGallery();
-                  createAigcProgressIndicators();
-                }
-
-                // Create progress indicators for example gallery
-                function createAigcProgressIndicators() {
-                  const indicatorsContainer = document.createElement("div");
-                  indicatorsContainer.classList.add("progress-indicators");
-                  indicatorsContainer.style.display = "flex";
-                  indicatorsContainer.style.justifyContent = "center";
-                  indicatorsContainer.style.marginTop = "10px";
-
-                  const totalGroups = Math.ceil(aigcVideoSources.length / 2);
-
-                  for (let i = 0; i < totalGroups; i++) {
-                    const indicator = document.createElement("div");
-                    indicator.classList.add("example-progress-indicator");
-                    indicator.style.width = "10px";
-                    indicator.style.height = "10px";
-                    indicator.style.borderRadius = "50%";
-                    indicator.style.backgroundColor = "#ccc";
-                    indicator.style.margin = "0 5px";
-                    indicator.style.cursor = "pointer";
-                    indicator.style.transition = "background-color 0.3s, transform 0.3s";
-
-                    indicator.addEventListener("click", () => {
-                      aigcIndex = i * 2;
-                      updateAigcGallery();
-                      updateAigcProgressIndicators();
-                    });
-
-                    indicatorsContainer.appendChild(indicator);
-                  }
-
-                  aigcGallery.parentNode.insertBefore(indicatorsContainer, aigcGallery.nextSibling);
-                  updateAigcProgressIndicators();
-                }
-
-                // Update example progress indicators
-                function updateAigcProgressIndicators() {
-                  const indicators = document.querySelectorAll(".example-progress-indicator");
-                  const activeGroup = Math.floor(aigcIndex / 2);
-
-                  indicators.forEach((indicator, i) => {
-                    if (i === activeGroup) {
-                      indicator.style.backgroundColor = "#3273dc";
-                      indicator.style.transform = "scale(1.2)";
-                    } else {
-                      indicator.style.backgroundColor = "#ccc";
-                      indicator.style.transform = "scale(1)";
-                    }
-                  });
-                }
-
-                // Initialize the gallery when the DOM is loaded
-                document.addEventListener("DOMContentLoaded", function () {
-                  // Preload all videos to reduce flickering
-                  aigcVideoSources.forEach(src => {
-                    const preloadVideo = document.createElement('video');
-                    preloadVideo.src = src;
-                    preloadVideo.style.display = 'none';
-                    preloadVideo.preload = 'auto';
-                    document.body.appendChild(preloadVideo);
-                    setTimeout(() => document.body.removeChild(preloadVideo), 5000);
-                  });
-                  
-                  initAigcGallery();
-                });
-              </script>
-            </section>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="hero is-small is-light">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="column is-centered has-text-centered">
-          <h2 class="title is-3">Ablation Study</h2>
-          <div class="content has-text-justified">
-            <p>
-              We conduct ablation studies to evaluate the contribution of different components of our method.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-centered has-text-centered">
-            <p><b>Without in-diffusion blending</b></p>
-            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
-              <source src="./static/videos/ablation/aba_blending.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="column is-centered has-text-centered">
-            <p><b>Without Shape Augmentation</b></p>
-            <video id="locomotion-control-video" loop muted playsinline controls width="100%">
-              <source src="./static/videos/ablation/aba_shape.mp4" type="video/mp4">
-            </video>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <footer class="footer">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-          <p>
-            This website is licensed under a <a rel="license"
-              href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-              Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-          <p>
-            Website source code based on the <a href="https://nerfies.github.io/"> Nerfies</a> project page.
-            If
-            you want to reuse their <a href="https://github.com/nerfies/nerfies.github.io">source code</a>,
-            please credit them
-            appropriately.
-          </p>
-        </div>
-      </div>
-    </div>
-    </div>
-  </footer>
-
+<script src="assets/site.js"></script>
 </body>
-
 </html>
