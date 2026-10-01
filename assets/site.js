@@ -72,4 +72,25 @@
       if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, function () {});
     });
   });
+
+  // Left contents rail: appears after the hero, highlights the section being read.
+  var toc = document.getElementById('toc');
+  if (toc) {
+    var links = Array.prototype.slice.call(toc.querySelectorAll('a[data-spy]'));
+    var targets = links.map(function (a) { return document.getElementById(a.dataset.spy); });
+    var hero = document.getElementById('top');
+    function spy() {
+      var y = window.innerHeight * 0.35;
+      var cur = -1;
+      for (var i = 0; i < targets.length; i++) {
+        if (targets[i] && targets[i].getBoundingClientRect().top <= y) cur = i;
+      }
+      links.forEach(function (a, i) { a.classList.toggle('active', i === cur); });
+      var past = hero ? hero.getBoundingClientRect().bottom < window.innerHeight * 0.4 : window.scrollY > 600;
+      toc.classList.toggle('show', past);
+    }
+    window.addEventListener('scroll', spy, { passive: true });
+    window.addEventListener('resize', spy);
+    spy();
+  }
 })();

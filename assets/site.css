@@ -255,3 +255,18 @@ footer p { margin: 0; }
 
 .viewer-body .section-lead { margin-bottom: 8px; }
 .viewer-frame { margin-top: 20px; }
+
+/* ---------- left contents rail (wide screens, after the hero) ---------- */
+.toc { position: fixed; left: max(24px, calc((100vw - 880px) / 2 - 200px)); top: 50%; z-index: 10; width: 150px; transform: translateY(-50%); opacity: 0; pointer-events: none; transition: opacity .25s; }
+.toc.show { opacity: 1; pointer-events: auto; }
+.toc ol { list-style: none; margin: 0; padding: 0; }
+.toc ol ol { margin: 2px 0 4px; padding-left: 12px; }
+.toc li { margin: 0; }
+.toc a { display: block; position: relative; padding: 4px 0 4px 14px; font: 500 12px/1.3 var(--mono); letter-spacing: .02em; color: var(--faint); text-decoration: none; transition: color .15s; }
+.toc a::before { content: ""; position: absolute; left: 0; top: 50%; width: 5px; height: 1px; background: var(--line-strong); transition: width .2s ease-out, background .2s; }
+.toc a:hover { color: var(--ink); }
+.toc a.active { color: var(--ink); }
+.toc a.active::before { width: 9px; height: 2px; margin-top: -0.5px; background: var(--ink); }
+.toc ol ol a { font-size: 11.5px; padding-left: 12px; }
+@media (max-width: 1279px) { .toc { display: none; } }
+@media (prefers-reduced-motion: reduce) { .toc, .toc a::before { transition: none; } }
